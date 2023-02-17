@@ -44,6 +44,8 @@ data_new_no_negative
 
 datatable2007clean <- na.omit(data_new_no_negative)
 
+## The above part basically just deletes all negative and NA values
+
 write.table(datatable2007clean, file = "datatable2007.txt", sep = "\t",
             row.names = FALSE, col.names = TRUE)
 
