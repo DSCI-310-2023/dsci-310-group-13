@@ -40,3 +40,5 @@ RUN Rscript -e "remotes::install_version('car','3.1-1')"
 RUN Rscript -e "remotes::install_version('corrplot','0.92')"
 
 #not test below
+RUN Rscript -e "remotes::install_version('tidymodels','1.0.0')"
+RUN Rscript -e "remotes::install_version('leaps','3.1')"
