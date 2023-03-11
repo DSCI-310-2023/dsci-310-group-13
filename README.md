@@ -6,7 +6,7 @@
 ## Summary:
 Youtube is one of the most popular websites in the world. Many people at some point in their lives may have thought whether or not they wanted to become a Youtuber as a future job. Data research and analysis would help any person looking to become a Youtuber to figure out how certain categories of data impact the number of views on a video. This analysis will try to predict the future view counts of Youtube videos based on previous view counts. The dataset used tracks categories like video ID, uploader, **age**, category, **length**, **views**, **rate**, **rating**, **comment count** and related IDs, but only the data in bold will be explored in the analysis as the other features are not important towards the prediction.
 
-To generate the report analysis.html, please go to the analysis folder, open analysis.Rmd, and click the `Knit` button. 
+**To generate the report** , please go to the analysis folder, open analysis.Rmd, and click the `Knit` button. 
 
 ### Dependencies:
 R version 4.2.2, R packages, analysis.Rmd can be found in the Dockerfile
