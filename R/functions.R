@@ -1,3 +1,8 @@
+library(tidyverse)
+library(car)
+library(leaps)
+library(dplyr)
+
 ##TODO 
 #write functions to READ DATA
 # Load in May 5th 2007 data
@@ -23,10 +28,6 @@ colnames(data2008_test) <- c("Video ID", "uploader", "age", 'category','length',
 rm("table0007", "table0008", "table0107", "table0108", "table0207", "table0208",
    "table0307", "table0308")
 ##TODO
-library(tidyverse)
-library(car)
-library(leaps)
-library(dplyr)
 #' This function takes in a YouTube Data that read from raw data and
 #' Remove unnecessary data and convert category variable as factor class
 #'
