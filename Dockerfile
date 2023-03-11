@@ -67,5 +67,4 @@ COPY --chown=rstudio:rstudio ./analysis/analysis.Rmd ./analysis/analysis.Rmd
 #cannot-open-shared-object-in-grdevices-grsoftversion/
 RUN apt-get update && apt-get -y --no-install-recommends install libxt6
 
-#not tested 
 RUN Rscript -e "remotes::install_version('devtools','2.4.5')"
