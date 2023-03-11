@@ -1,0 +1,187 @@
+# Predicting Youtube View Count in 2007/2008
+
+### Introduction
+
+After being acquired by Google in 2006, Youtube obtained a rapid growth in popularity resulting in a growing community. The goal of this project is to use the data of 2007 to predict the view of videos in 2008. We will be using datasets from https://netsg.cs.sfu.ca/youtubedata/. 
+
+## TODO
+-justify why choosing one date (source abt yt views higher during holidays)
+-ways to improve model
+-expand on intro
+-need to do discussion
+-find sources
+-maybe log some explanatory variables -> there's infinity so get rid of them maybe(justify: outliers?)
+
+### Methods
+
+```{r, message=FALSE,warning=FALSE}
+# Setup
+library(tidyverse)
+library(tidymodels)
+library(corrplot)
+library(car)
+library(leaps)
+```
+
+```{r, message=FALSE}
+# Load in May 5th 2007 data
+library(here)
+source("/home/rstudio/R/functions.R")
+table0007 <- read.delim("/home/rstudio/data/0007.txt", header = FALSE, sep = "\t", dec = ".")
+table0107 <- read.delim("/home/rstudio/data/0107.txt", header = FALSE, sep = "\t", dec = ".")
+table0207 <- read.delim("/home/rstudio/data/0207.txt", header = FALSE, sep = "\t", dec = ".")
+table0307 <- read.delim("/home/rstudio/data/0307.txt", header = FALSE, sep = "\t", dec = ".")
+
+data2007 <- rbind(table0007,table0107,table0207, table0307)|> na.omit()
+colnames(data2007) <- c("Video ID", "uploader", "age", 'category','length','views','rate','ratings','comments','related IDs')
+
+# Load in May 4th 2008 data
+table0008 <- read.delim("/home/rstudio/data/0008.txt", header = FALSE, sep = "\t", dec = ".")
+table0108 <- read.delim("/home/rstudio/data/0108.txt", header = FALSE, sep = "\t", dec = ".")
+table0208 <- read.delim("/home/rstudio/data/0208.txt", header = FALSE, sep = "\t", dec = ".")
+table0308 <- read.delim("/home/rstudio/data/0308.txt", header = FALSE, sep = "\t", dec = ".")
+
+data2008 <- rbind(table0008,table0108,table0208, table0308)|> na.omit()
+colnames(data2008) <- c("Video ID", "uploader", "age", 'category','length','views','rate','ratings','comments','related IDs')
+```
+
+#### Wrangling data
+We decide to immediately remove some of the variables presented in the datasets. This included `uploader`,`video ID`, and `related IDs` because these variables appear to be unique to the videos itself and not affect video views as a whole.
+
+```{r}
+# Remove unnecessary data and convert category variable as factor class
+
+#data2007 <- data2007|> select(-c(1,2,10:29)) |> mutate(category = as.factor(category))
+#data2008 <- data2008 |>  select(-c(1,2,10:29)) |> mutate(category = as.factor(category))
+data2007 <- wrangling_data(data = data2007)
+data2008 <- wrangling_data(data = data2008)
+head(data2007)
+```
+
+**Table 1:** The dataset obtained uses a crawler to obtained video API and scrape the webpage for the remaining information.
+
+**Age:** an integer number of days between the date when the video was uploaded and Feb.15, 2007
+
+**Category:** string of the video category chosen by the uploader
+
+**Length:** integer number of the video length
+
+**Views:** integer number of the views
+
+**Rate:** float number of the video rate
+
+**Ratings:** integer number of the ratings
+
+**Comments:** integer number of the comments
+
+### Preliminary Analysis
+
+```{r}
+# Observe the explanatory variables individually against the predictor
+pivot_longer(data2007,-c(views,category))|> 
+    ggplot(aes(value,views,color=name)) +
+    geom_point() +
+    facet_wrap(~name, scales ='free',strip.position='bottom') + 
+    scale_color_viridis_d() + 
+    xlab("") + ylab("views")
+```
+
+**Figure 1:** Plot of `views` against the quantitative explanatory variables
+
+We can observe that most variables do not a have linear relationship with the predictor variable, only `ratings` has a slight positive linear relationship. Some variables like `length` and `comments` may benefit from a logarithmic transformation.
+
+```{r}
+ggplot(data2007, aes(category,views, fill = category))+ geom_bar(stat = 'identity')+coord_flip() +
+labs(x = "Views", y = "Category", fill = "Category Against Number of Views")
+```
+
+**Figure 2:** Plot of the number of views garnered by each type of category.
+
+```{r}
+# Correlation plot
+corrvar <- data2007|> select(-c(2))|> cor()
+corrplot(corrvar, method = 'number')
+```
+
+**Figure 3:** Correlation plot of the predictor and the explanatory variables, excluding `category`
+
+Taking a look at the correlation plot, we can see that `ratings` and `comments` have the strong positive relationship with the predictive variable `views`. Meanwhile, the other explanatory variables have a very weak relationship with `views`. `ratings` has a positive correlation with `view` and `comments` too. Because there are explanatory variables with correlation against each other, we check if multicollinearity is significant by taking a look at the VIF scores.
+
+```{r}
+vif(lm(views~.,data2007))
+```
+
+**Table 2:** VIF values of the explanatory variables
+
+The VIF values of the variables are not particularly big, so multicollinearity would not affect the model significantly. 
+
+### Model Selection
+
+```{r}
+# Find the best model for each size
+bestmod <- regsubsets(views~.,data2007,method='exhaustive')
+summary(bestmod)
+```
+
+Looking at the selection algorithm, variables like `age`. `ratings`, and `comments` appear in most subsets. On the other hand, `category` did not appear consistently in the subsets, while `length` and `rate` were present in half of the displayed subsets.
+
+```{r}
+# Looking at some of the metrics
+mydat <- as.data.frame(cbind("BIC" = summary(bestmod)$bic, 'AdjustedR2'= summary(bestmod)$adjr2, 'Size' = 1:8))
+pivot_longer(mydat,-Size)|> 
+    ggplot(aes(value,Size,color=name)) +
+    geom_line() +
+    coord_flip() +
+    facet_wrap(~name, scales ='free',strip.position='bottom')+
+    xlab("") + labs(colour='Metrics')
+```
+
+**Figure 4:** Plot of the adjusted $R^2$ and BIC values against the size of the models
+
+A well-fitted model would have a high adjusted $R^2$ and low BIC values, but these metrics are not particularly prioritized because our end goal is prediction, so we rather prioritize reducing RMSE. However, this figure suggests a large model would fit well with the data.
+
+### Analysis
+
+We choose to use 2 explanatory variables: `age` and `ratings` to predict our response variable. While having a larger model would fit our data better, we hope that minimizing the number of explanatory variables will reduce RMSE.
+
+```{r}
+# Selecting variables for reduced model
+datareduced <- data2007 |>  select(c(views,age,ratings,comments))
+```
+
+```{r}
+# Split data into training and testing set
+split <- initial_split(datareduced, prop = 3/4, strata = views)
+train <- training(split)
+test <- testing(split)
+
+# Fit the regression model
+lm_spec <- linear_reg() |> set_engine('lm') |> set_mode('regression')
+
+lm_recipe <- recipe(views~., data = train)
+
+lm_fit <- workflow() |> add_recipe(lm_recipe) |> add_model(lm_spec) |> fit(data = train)
+
+lm_fit
+```
+
+Although there is a low p-value for the coefficients, the adjusted R-squared value is not particularly high and an extremely high standard error.
+
+```{r}
+# Lets look at how well our model performed
+lm_test_results <- lm_fit |> predict(test) |> bind_cols(test) |> metrics(truth = views, estimate = .pred)
+
+lm_test_results
+```
+
+It seems like the residual mean squared error is still enormously high, but the RMSE is smaller than that of the full model.
+
+```{r}
+# Lets see if our model can predict the 2008 values well
+data2008reduced <- data2008 |> select(c(age,ratings,comments))
+predict2008 <- predict(lm_fit,data2008reduced)
+head(cbind('Actual' = data2008$views,'Predicted' = predict2008))
+```
+
+Our predicted values are several times higher than the actual 2008 values.
+

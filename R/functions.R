@@ -1,26 +1,20 @@
-library(tidyverse)
-#library(car)
-#library(leaps)
-library(dplyr)
-#library(here)
-
 ##TODO 
 #write functions to READ DATA
 # Load in May 5th 2007 data
-table0007 <- read.delim("./data/0007.txt", header = FALSE, sep = "\t", dec = ".")
-table0107 <- read.delim("./data/0107.txt", header = FALSE, sep = "\t", dec = ".")
-table0207 <- read.delim("./data/0207.txt", header = FALSE, sep = "\t", dec = ".")
-table0307 <- read.delim("./data/0307.txt", header = FALSE, sep = "\t", dec = ".")
+table0007 <- read.delim("/home/rstudio/data/0007.txt", header = FALSE, sep = "\t", dec = ".")
+table0107 <- read.delim("/home/rstudio/data/0107.txt", header = FALSE, sep = "\t", dec = ".")
+table0207 <- read.delim("/home/rstudio/data/0207.txt", header = FALSE, sep = "\t", dec = ".")
+table0307 <- read.delim("/home/rstudio/data/0307.txt", header = FALSE, sep = "\t", dec = ".")
 
 data2007_test <- rbind(table0007,table0107,table0207, table0307)|> na.omit()
 colnames(data2007_test) <- c("Video ID", "uploader", "age", 'category','length',
                              'views','rate','ratings','comments','related IDs')
 
 # Load in May 4th 2008 data
-table0008 <- read.delim("./data/0008.txt", header = FALSE, sep = "\t", dec = ".")
-table0108 <- read.delim("./data/0108.txt", header = FALSE, sep = "\t", dec = ".")
-table0208 <- read.delim("./data/0208.txt", header = FALSE, sep = "\t", dec = ".")
-table0308 <- read.delim("./data/0308.txt", header = FALSE, sep = "\t", dec = ".")
+table0008 <- read.delim("/home/rstudio/data/0008.txt", header = FALSE, sep = "\t", dec = ".")
+table0108 <- read.delim("/home/rstudio/data/0108.txt", header = FALSE, sep = "\t", dec = ".")
+table0208 <- read.delim("/home/rstudio/data/0208.txt", header = FALSE, sep = "\t", dec = ".")
+table0308 <- read.delim("/home/rstudio/data/0308.txt", header = FALSE, sep = "\t", dec = ".")
 
 data2008_test <- rbind(table0008,table0108,table0208, table0308)|> na.omit()
 colnames(data2008_test) <- c("Video ID", "uploader", "age", 'category','length',
@@ -29,7 +23,10 @@ colnames(data2008_test) <- c("Video ID", "uploader", "age", 'category','length',
 rm("table0007", "table0008", "table0107", "table0108", "table0207", "table0208",
    "table0307", "table0308")
 ##TODO
-
+library(tidyverse)
+library(car)
+library(leaps)
+library(dplyr)
 #' This function takes in a YouTube Data that read from raw data and
 #' Remove unnecessary data and convert category variable as factor class
 #'
