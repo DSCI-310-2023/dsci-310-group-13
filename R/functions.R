@@ -1,7 +1,9 @@
 library(tidyverse)
+library(tidymodels)
+library(corrplot)
 library(car)
 library(leaps)
-library(dplyr)
+library(here)
 
 ##TODO 
 #write functions to READ DATA
@@ -78,8 +80,64 @@ testthat::expect_error(wrangling_data(3),"Please have a valid dataframe as input
 testthat::expect_equal(ncol(data2007), 7)
 testthat::expect_equal(ncol(data2008), 7)
 
-##TODO
-## function for analysis
 
+## Regression function:
+#' The function accepts the wrangled Youtube dataset of type dataframe and fits a linear regression
+#' model to the data.
+#'
+#' @param traindata: Typically a portion of the dataset that is used for training a regression model 
+#'
+#' @returns a linear regression model with 'views' as the response variable and the chosen variables
+#' as the explanatory variables
+#'
+#' @examples
+#' # fit_regression(training)
+
+fit_regression <- function(traindata){
+  stopifnot(is.data.frame(traindata))
+  lm_spec <- linear_reg() |> set_engine('lm') |> set_mode('regression')
+  
+  lm_recipe <- recipe(views~., data = traindata)
+  
+  lm_fit <- workflow() |> add_recipe(lm_recipe) |> add_model(lm_spec) |> fit(data = traindata)
+  
+  lm_fit
+}
+
+
+#Testing
+
+# Selecting variables for reduced model
+datareduced <- data2007 |>  select(c(views,age,ratings,comments))
+
+# Split data into training and testing set
+split <- initial_split(datareduced, prop = 3/4, strata = views)
+train <- training(split)
+test <- testing(split)
+
+# Fit the regression model
+lm_spec <- linear_reg() |> set_engine('lm') |> set_mode('regression')
+
+lm_recipe <- recipe(views~., data = train)
+
+lm_fit <- workflow() |> add_recipe(lm_recipe) |> add_model(lm_spec) |> fit(data = train)
+
+# The results our model performed
+lm_test_results <- lm_fit |> predict(test) |> bind_cols(test) |> metrics(truth = views, estimate = .pred)
+
+#test if parameter is a dataframe
+testthat::expect_error(fit_regression(c(1:5)))
+testthat::expect_error(fit_regression("hello"))
+
+#test that the model is formed properly:
+# coefficients
+expect_equal(as.numeric(tidy(lm_fit)$estimate[1]), as.numeric(lm(views~.,train)$coefficients[1]))
+# rmse
+expect_equal(lm_test_results$.estimate[1],
+             sqrt(mean((test$views - predict(lm_fit, test)$.pred)^2)))
+
+
+#remove all temporary variables 
+rm("datareduced", "split", "train", "test", "lm_spec", "lm_recipe", "lm_fit",
+   "lm_test_results")
 rm("data2007", "data2008", "data2007_test","data2008_test")
-
