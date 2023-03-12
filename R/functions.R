@@ -80,11 +80,18 @@ testthat::expect_error(wrangling_data(3),"Please have a valid dataframe as input
 testthat::expect_equal(ncol(data2007), 7)
 testthat::expect_equal(ncol(data2008), 7)
 
-##TODO
-## function for analysis
-
 
 ## Regression function:
+#' The function accepts the wrangled Youtube dataset of type dataframe and fits a linear regression
+#' model to the data.
+#'
+#' @param traindata: Typically a portion of the dataset that is used for training a regression model 
+#'
+#' @returns a linear regression model with 'views' as the response variable and the chosen variables
+#' as the explanatory variables
+#'
+#' @examples
+#' # fit_regression(training)
 
 fit_regression <- function(traindata){
   stopifnot(is.data.frame(traindata))
@@ -97,18 +104,6 @@ fit_regression <- function(traindata){
   lm_fit
 }
 
-## TODO
-#' The function accepts the wrangled Youtube dataset of type dataframe and fits a linear regression
-#' model to the data.
-#'
-#' @param traindata: Typically a portion of the dataset that is used for training a regression model 
-#'
-#' @returns a linear regression model with 'views' as the response variable and the chosen variables
-#' as the explanatory variables
-#'
-#' @examples
-#' # fit_regression(training)
-#'
 
 #Testing
 
