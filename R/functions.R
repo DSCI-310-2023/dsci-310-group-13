@@ -15,16 +15,12 @@ getwd();
 #Set base directory
 base_dir <- '/home/rstudio/data/';
 
-#instantiate empty list
 total_list <- list();
-
 # read all files in the folder
 # this assumes that all the data files are in the same folder
 all_files <- paste0(base_dir, list.files(base_dir, recursive = TRUE))
 
-# Reads all files with extensions that match the format of the data, while 
-# ignoring other files, returns a list of strings with table names, but not
-# the actual table data
+# Parses through folder in which files are located in and ignores any file that is not required for data collection
 remove_non_text_files <- function(file_list) {
     i = 0;
     for(file in file_list){
@@ -34,7 +30,7 @@ remove_non_text_files <- function(file_list) {
                 print(file_list[i])
                 total_list <- append(total_list, file_list[i])
             }
-            
+
         }
     }
     return(total_list)
@@ -43,11 +39,17 @@ remove_non_text_files <- function(file_list) {
 total_list <- remove_non_text_files(all_files);
 total_list <- unlist(total_list)
 #test that the all_files inputs all data from the folder
-testthat::expect_identical(total_list[1], 'data/0007.txt')
-testthat::expect_identical(total_list[8], 'data/0308.txt')
+expect_identical(total_list[1], 'data/0007.txt')
+expect_identical(total_list[8], 'data/0308.txt')
 
-# takes a list of strings with file names, in order to 
-# load in data and combine into 1 dataframe
+# Splits data into 2 separate lists
+data2007names <- total_list[c(TRUE, FALSE)];
+data2008names <- total_list[c(FALSE, TRUE)];
+
+
+
+# Creates data tables given list of files
+
 list_of_data <- function(fileList) {
     j = 0;
     for(file in fileList) {
@@ -58,9 +60,10 @@ list_of_data <- function(fileList) {
     return(total_list);
 }
 
-total_list <- list_of_data(total_list);
+data2007temp <- list_of_data(data2007names);
+data2008temp <- list_of_data(data2008names);
 
-#removes any NA or negative values, taking a dataframe as a parameter
+# removes negatives and NA values
 remove_negatives <- function(dataTable) {
     dataTable <- dataTable[-c(1),];
     temp_table <- dataTable;
@@ -68,16 +71,22 @@ remove_negatives <- function(dataTable) {
     return(temp_table);
 }
 
-negatives_deleted = remove_negatives(total_list)
+negatives_deleted_2007 = remove_negatives(data2007temp)
+negatives_deleted_2008 = remove_negatives(data2008temp)
 
+total_list_clean_2007 <- na.omit(negatives_deleted_2007)
+total_list_clean_2008 <- na.omit(negatives_deleted_2008)
+  
+# Names columns
+colnames(total_list_clean_2007) <- c("Video ID", "uploader", "age", 'category','length','views','rate','ratings','comments','related IDs')
+colnames(total_list_clean_2008) <- c("Video ID", "uploader", "age", 'category','length','views','rate','ratings','comments','related IDs')
 
-total_list_clean <- na.omit(negatives_deleted)
+data2007 = total_list_clean_2007;
+data2008 = total_list_clean_2008;
 
-#assign column names to the table
-colnames(total_list_clean) <- c("Video ID", "uploader", "age", 'category','length','views','rate','ratings','comments','related IDs')
+testthat::expect_identical(colnames(data2007)[1], "Video ID")
+testthat::expect_identical(colnames(data2008)[10], "related IDs")
 
-testthat::expect_identical(colnames(total_list_clean)[1], "Video ID")
-testthat::expect_identical(colnames(total_list_clean)[10], "related IDs")
 
 
 ##TODO
