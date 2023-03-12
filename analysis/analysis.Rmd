@@ -156,12 +156,7 @@ train <- training(split)
 test <- testing(split)
 
 # Fit the regression model
-lm_spec <- linear_reg() |> set_engine('lm') |> set_mode('regression')
-
-lm_recipe <- recipe(views~., data = train)
-
-lm_fit <- workflow() |> add_recipe(lm_recipe) |> add_model(lm_spec) |> fit(data = train)
-
+lm_fit <- fit_regression(train)
 lm_fit
 ```
 

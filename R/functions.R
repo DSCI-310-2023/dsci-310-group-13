@@ -83,3 +83,28 @@ testthat::expect_equal(ncol(data2008), 7)
 
 rm("data2007", "data2008", "data2007_test","data2008_test")
 
+
+# Regression function:
+fit_regression <- function(traindata){
+  stopifnot(is.data.frame(traindata))
+  lm_spec <- linear_reg() |> set_engine('lm') |> set_mode('regression')
+  
+  lm_recipe <- recipe(views~., data = traindata)
+  
+  lm_fit <- workflow() |> add_recipe(lm_recipe) |> add_model(lm_spec) |> fit(data = traindata)
+  
+  lm_fit
+}
+
+#Testing
+
+#test if parameter is a dataframe
+testthat::expect_error(fit_regression(c(1:5)))
+testthat::expect_error(fit_regression("hello"))
+
+#test that the model is formed properly:
+# coefficients
+expect_equal(as.numeric(tidy(lm_fit)$estimate[1]), as.numeric(lm(views~.,train)$coefficients[1]))
+# rmse
+expect_equal(lm_test_results$.estimate[1],
+             sqrt(mean((test$views - predict(lm_fit, test)$.pred)^2)))
