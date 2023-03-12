@@ -81,8 +81,8 @@ total_list_clean_2008 <- na.omit(negatives_deleted_2008)
 colnames(total_list_clean_2007) <- c("Video ID", "uploader", "age", 'category','length','views','rate','ratings','comments','related IDs')
 colnames(total_list_clean_2008) <- c("Video ID", "uploader", "age", 'category','length','views','rate','ratings','comments','related IDs')
 
-data2007 = total_list_clean_2007;
-data2008 = total_list_clean_2008;
+data2007_test = total_list_clean_2007;
+data2008_test = total_list_clean_2008;
 
 testthat::expect_identical(colnames(data2007)[1], "Video ID")
 testthat::expect_identical(colnames(data2008)[10], "related IDs")
