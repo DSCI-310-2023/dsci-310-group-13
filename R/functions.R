@@ -84,6 +84,10 @@ testthat::expect_equal(ncol(data2008), 7)
 ## function for analysis
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 71f6f2337a2bc57deb85a5a9b549df6d10aa4bd7
 # Regression function:
 fit_regression <- function(traindata){
   stopifnot(is.data.frame(traindata))
@@ -98,6 +102,7 @@ fit_regression <- function(traindata){
 
 #Testing
 
+<<<<<<< HEAD
 # Selecting variables for reduced model
 datareduced <- data2007 |>  select(c(views,age,ratings,comments))
 
@@ -116,6 +121,8 @@ lm_fit <- workflow() |> add_recipe(lm_recipe) |> add_model(lm_spec) |> fit(data 
 # The results our model performed
 lm_test_results <- lm_fit |> predict(test) |> bind_cols(test) |> metrics(truth = views, estimate = .pred)
 
+=======
+>>>>>>> 71f6f2337a2bc57deb85a5a9b549df6d10aa4bd7
 #test if parameter is a dataframe
 testthat::expect_error(fit_regression(c(1:5)))
 testthat::expect_error(fit_regression("hello"))
@@ -126,9 +133,12 @@ expect_equal(as.numeric(tidy(lm_fit)$estimate[1]), as.numeric(lm(views~.,train)$
 # rmse
 expect_equal(lm_test_results$.estimate[1],
              sqrt(mean((test$views - predict(lm_fit, test)$.pred)^2)))
+<<<<<<< HEAD
 
 
 #remove all temporary variables 
 rm("datareduced", "split", "train", "test", "lm_spec", "lm_recipe", "lm_fit",
    "lm_test_results")
 rm("data2007", "data2008", "data2007_test","data2008_test")
+=======
+>>>>>>> 71f6f2337a2bc57deb85a5a9b549df6d10aa4bd7
