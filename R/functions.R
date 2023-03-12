@@ -84,7 +84,8 @@ testthat::expect_equal(ncol(data2008), 7)
 rm("data2007", "data2008", "data2007_test","data2008_test")
 
 
-# Regression function:
+## Regression function:
+
 fit_regression <- function(traindata){
   stopifnot(is.data.frame(traindata))
   lm_spec <- linear_reg() |> set_engine('lm') |> set_mode('regression')
@@ -95,6 +96,19 @@ fit_regression <- function(traindata){
   
   lm_fit
 }
+
+## TODO
+#' The function accepts the wrangled Youtube dataset of type dataframe and fits a linear regression
+#' model to the data.
+#'
+#' @param traindata: Typically a portion of the dataset that is used for training a regression model 
+#'
+#' @returns a linear regression model with 'views' as the response variable and the chosen variables
+#' as the explanatory variables
+#'
+#' @examples
+#' # fit_regression(training)
+#'
 
 #Testing
 
