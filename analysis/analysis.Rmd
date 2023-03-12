@@ -28,22 +28,37 @@ library(testthat)
 # Load in May 5th 2007 data
 library(here)
 source("/home/rstudio/R/functions.R")
-table0007 <- read.delim("/home/rstudio/data/0007.txt", header = FALSE, sep = "\t", dec = ".")
-table0107 <- read.delim("/home/rstudio/data/0107.txt", header = FALSE, sep = "\t", dec = ".")
-table0207 <- read.delim("/home/rstudio/data/0207.txt", header = FALSE, sep = "\t", dec = ".")
-table0307 <- read.delim("/home/rstudio/data/0307.txt", header = FALSE, sep = "\t", dec = ".")
+base_dir <- '/home/rstudio/data/';
+total_list <- list();
 
-data2007 <- rbind(table0007,table0107,table0207, table0307)|> na.omit()
-colnames(data2007) <- c("Video ID", "uploader", "age", 'category','length','views','rate','ratings','comments','related IDs')
+# read all files in the folder
+# this assumes that all the data files are in the same folder
+all_files <- paste0(base_dir, list.files(base_dir, recursive = TRUE))
 
-# Load in May 4th 2008 data
-table0008 <- read.delim("/home/rstudio/data/0008.txt", header = FALSE, sep = "\t", dec = ".")
-table0108 <- read.delim("/home/rstudio/data/0108.txt", header = FALSE, sep = "\t", dec = ".")
-table0208 <- read.delim("/home/rstudio/data/0208.txt", header = FALSE, sep = "\t", dec = ".")
-table0308 <- read.delim("/home/rstudio/data/0308.txt", header = FALSE, sep = "\t", dec = ".")
+total_list <- remove_non_text_files(all_files);
+total_list <- unlist(total_list)
 
-data2008 <- rbind(table0008,table0108,table0208, table0308)|> na.omit()
-colnames(data2008) <- c("Video ID", "uploader", "age", 'category','length','views','rate','ratings','comments','related IDs')
+# Splits data into 2 separate lists
+data2007names <- total_list[c(TRUE, FALSE)];
+data2008names <- total_list[c(FALSE, TRUE)];
+
+data2007temp <- list_of_data(data2007names);
+data2008temp <- list_of_data(data2008names);
+
+# removes all negative and NA values
+
+negatives_deleted_2007 = remove_negatives(data2007temp)
+negatives_deleted_2008 = remove_negatives(data2008temp)
+
+total_list_clean_2007 <- na.omit(negatives_deleted_2007)
+total_list_clean_2008 <- na.omit(negatives_deleted_2008)
+  
+#add column names to data
+colnames(total_list_clean_2007) <- c("Video ID", "uploader", "age", 'category','length','views','rate','ratings','comments','related IDs')
+colnames(total_list_clean_2008) <- c("Video ID", "uploader", "age", 'category','length','views','rate','ratings','comments','related IDs')
+
+data2007 = total_list_clean_2007;
+data2008 = total_list_clean_2008;
 ```
 
 #### Wrangling data
