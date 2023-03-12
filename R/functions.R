@@ -13,7 +13,7 @@ getwd();
 # or
 # directory <- 'path/to/my/working/directory'
 #Set base directory
-base_dir <- 'data/';
+base_dir <- '/home/rstudio/data/';
 
 #instantiate empty list
 total_list <- list();
