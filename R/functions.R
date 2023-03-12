@@ -4,31 +4,82 @@ library(corrplot)
 library(car)
 library(leaps)
 library(here)
+library(testthat)
+# Get the working directory 
+getwd();
+# In case this directory is not the location the data files are located in,
+# either Use the Tools | Change Working Dir... menu (Session | Set Working Directory on a mac). 
+# This will also change directory location of the Files pane.
+# or
+# directory <- 'path/to/my/working/directory'
+#Set base directory
+base_dir <- 'data/';
 
-##TODO 
-#write functions to READ DATA
-# Load in May 5th 2007 data
-table0007 <- read.delim("/home/rstudio/data/0007.txt", header = FALSE, sep = "\t", dec = ".")
-table0107 <- read.delim("/home/rstudio/data/0107.txt", header = FALSE, sep = "\t", dec = ".")
-table0207 <- read.delim("/home/rstudio/data/0207.txt", header = FALSE, sep = "\t", dec = ".")
-table0307 <- read.delim("/home/rstudio/data/0307.txt", header = FALSE, sep = "\t", dec = ".")
+#instantiate empty list
+total_list <- list();
 
-data2007_test <- rbind(table0007,table0107,table0207, table0307)|> na.omit()
-colnames(data2007_test) <- c("Video ID", "uploader", "age", 'category','length',
-                             'views','rate','ratings','comments','related IDs')
+# read all files in the folder
+# this assumes that all the data files are in the same folder
+all_files <- paste0(base_dir, list.files(base_dir, recursive = TRUE))
 
-# Load in May 4th 2008 data
-table0008 <- read.delim("/home/rstudio/data/0008.txt", header = FALSE, sep = "\t", dec = ".")
-table0108 <- read.delim("/home/rstudio/data/0108.txt", header = FALSE, sep = "\t", dec = ".")
-table0208 <- read.delim("/home/rstudio/data/0208.txt", header = FALSE, sep = "\t", dec = ".")
-table0308 <- read.delim("/home/rstudio/data/0308.txt", header = FALSE, sep = "\t", dec = ".")
+# Reads all files with extensions that match the format of the data, while 
+# ignoring other files, returns a list of strings with table names, but not
+# the actual table data
+remove_non_text_files <- function(file_list) {
+    i = 0;
+    for(file in file_list){
+        if(!endsWith(file, '.R') && !endsWith(file, '.zip')){
+            if(startsWith(file, 'data/0') || startsWith(file, 'data/1')){
+                i = i + 1;
+                print(file_list[i])
+                total_list <- append(total_list, file_list[i])
+            }
+            
+        }
+    }
+    return(total_list)
+}
 
-data2008_test <- rbind(table0008,table0108,table0208, table0308)|> na.omit()
-colnames(data2008_test) <- c("Video ID", "uploader", "age", 'category','length',
-                             'views','rate','ratings','comments','related IDs')
-#remove temporary dataframes from the workspace
-rm("table0007", "table0008", "table0107", "table0108", "table0207", "table0208",
-   "table0307", "table0308")
+total_list <- remove_non_text_files(all_files);
+total_list <- unlist(total_list)
+#test that the all_files inputs all data from the folder
+testthat::expect_identical(total_list[1], 'data/0007.txt')
+testthat::expect_identical(total_list[8], 'data/0308.txt')
+
+# takes a list of strings with file names, in order to 
+# load in data and combine into 1 dataframe
+list_of_data <- function(fileList) {
+    j = 0;
+    for(file in fileList) {
+        j = j + 1;
+        temporary_file <- read.delim(fileList[j], header = FALSE, sep = '\t', dec = '.');
+        total_list <- rbind(total_list, temporary_file);
+    }
+    return(total_list);
+}
+
+total_list <- list_of_data(total_list);
+
+#removes any NA or negative values, taking a dataframe as a parameter
+remove_negatives <- function(dataTable) {
+    dataTable <- dataTable[-c(1),];
+    temp_table <- dataTable;
+    temp_table[temp_table < 0] <- NA
+    return(temp_table);
+}
+
+negatives_deleted = remove_negatives(total_list)
+
+
+total_list_clean <- na.omit(negatives_deleted)
+
+#assign column names to the table
+colnames(total_list_clean) <- c("Video ID", "uploader", "age", 'category','length','views','rate','ratings','comments','related IDs')
+
+testthat::expect_identical(colnames(total_list_clean)[1], "Video ID")
+testthat::expect_identical(colnames(total_list_clean)[10], "related IDs")
+
+
 ##TODO
 #' This function takes in a YouTube Data that read from raw data and
 #' Remove unnecessary data and convert category variable as factor class
@@ -46,10 +97,10 @@ rm("table0007", "table0008", "table0107", "table0108", "table0207", "table0208",
 #' # wrangling_data(data2008_test)
 #'
 wrangling_data <- function(data) {
-  if (!(is.list(data))){
-    stop("Please have a valid dataframe as input!")
-  }
-  data|> select(-c(1,2,10:29)) |> mutate(category = as.factor(category))
+    if (!(is.list(data))){
+        stop("Please have a valid dataframe as input!")
+    }
+    data|> select(-c(1,2,10:29)) |> mutate(category = as.factor(category))
 }
 
 
@@ -94,14 +145,14 @@ testthat::expect_equal(ncol(data2008), 7)
 #' # fit_regression(training)
 
 fit_regression <- function(traindata){
-  stopifnot(is.data.frame(traindata))
-  lm_spec <- linear_reg() |> set_engine('lm') |> set_mode('regression')
-  
-  lm_recipe <- recipe(views~., data = traindata)
-  
-  lm_fit <- workflow() |> add_recipe(lm_recipe) |> add_model(lm_spec) |> fit(data = traindata)
-  
-  lm_fit
+    stopifnot(is.data.frame(traindata))
+    lm_spec <- linear_reg() |> set_engine('lm') |> set_mode('regression')
+    
+    lm_recipe <- recipe(views~., data = traindata)
+    
+    lm_fit <- workflow() |> add_recipe(lm_recipe) |> add_model(lm_spec) |> fit(data = traindata)
+    
+    lm_fit
 }
 
 
