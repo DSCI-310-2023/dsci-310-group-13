@@ -5,90 +5,64 @@ library(car)
 library(leaps)
 library(here)
 library(testthat)
-# Get the working directory 
-getwd();
-# In case this directory is not the location the data files are located in,
-# either Use the Tools | Change Working Dir... menu (Session | Set Working Directory on a mac). 
-# This will also change directory location of the Files pane.
-# or
-# directory <- 'path/to/my/working/directory'
-#Set base directory
-base_dir <- '/home/rstudio/data/';
 
-total_list <- list();
-# read all files in the folder
-# this assumes that all the data files are in the same folder
-all_files <- paste0(base_dir, list.files(base_dir, recursive = TRUE))
 
-# Parses through folder in which files are located in and ignores any file that is not required for data collection
-remove_non_text_files <- function(file_list) {
-    i = 0;
-    for(file in file_list){
-        if(!endsWith(file, '.R') && !endsWith(file, '.zip')){
-            if(startsWith(file, 'data/0') || startsWith(file, 'data/1')){
-                i = i + 1;
-                print(file_list[i])
-                total_list <- append(total_list, file_list[i])
-            }
-
-        }
-    }
-    return(total_list)
+#' This function takes in a path to where the file located and read the data
+#'
+#' @param path_to_file The path to where the file is located 
+#'
+#' @returns a data frame that contains raw data in the file 
+#'
+#' @examples
+#' # read_raw_data("/home/rstudio/data/0007.txt")
+#' # read_raw_data("/home/rstudio/data/0107.txt")
+#'
+read_raw_data <- function(path_to_file){
+  read.delim({{path_to_file}}, header = FALSE, sep = "\t", dec = ".")
 }
 
-total_list <- remove_non_text_files(all_files);
-total_list <- unlist(total_list)
-#test that the all_files inputs all data from the folder
-expect_identical(total_list[1], 'data/0007.txt')
-expect_identical(total_list[8], 'data/0308.txt')
 
-# Splits data into 2 separate lists
-data2007names <- total_list[c(TRUE, FALSE)];
-data2008names <- total_list[c(FALSE, TRUE)];
-
-
-
-# Creates data tables given list of files
-
-list_of_data <- function(fileList) {
-    j = 0;
-    for(file in fileList) {
-        j = j + 1;
-        temporary_file <- read.delim(fileList[j], header = FALSE, sep = '\t', dec = '.');
-        total_list <- rbind(total_list, temporary_file);
-    }
-    return(total_list);
+#' This function combines all the raw data tables that contains raw data in one
+#' year and remove all rows with NA in the table
+#'
+#' @param t1 The first raw data table to be combined 
+#' @param t2 The second raw data table to be combined 
+#' @param t3 The third raw data table to be combined
+#' @param t4 The fourth raw data table to be combined
+#' 
+#' @returns a data frame that contains all raw data in one year 
+#'
+#' @examples
+#' # bind_tables(table0007,table0107,table0207, table0307)
+#' # bind_tables(table0008,table0108,table0208, table0308)
+#'
+bind_tables <- function(t1, t2, t3, t4){
+  rbind(t1, t2, t3, t4)|> na.omit()
 }
 
-data2007temp <- list_of_data(data2007names);
-data2008temp <- list_of_data(data2008names);
+youtube_col_names <- c("Video ID", "uploader", "age", 'category','length',
+                       'views','rate','ratings','comments','related IDs')
 
-# removes negatives and NA values
-remove_negatives <- function(dataTable) {
-    dataTable <- dataTable[-c(1),];
-    temp_table <- dataTable;
-    temp_table[temp_table < 0] <- NA
-    return(temp_table);
-}
+# Load in May 5th 2007 data
+table0007 <- read_raw_data("/home/rstudio/data/0007.txt")
+table0107 <- read_raw_data("/home/rstudio/data/0107.txt")
+table0207 <- read_raw_data("/home/rstudio/data/0207.txt")
+table0307 <- read_raw_data("/home/rstudio/data/0307.txt")
 
-negatives_deleted_2007 = remove_negatives(data2007temp)
-negatives_deleted_2008 = remove_negatives(data2008temp)
+data2007_test <- bind_tables(table0007,table0107,table0207, table0307)
+colnames(data2007_test) <- youtube_col_names
 
-total_list_clean_2007 <- na.omit(negatives_deleted_2007)
-total_list_clean_2008 <- na.omit(negatives_deleted_2008)
-  
-# Names columns
-colnames(total_list_clean_2007) <- c("Video ID", "uploader", "age", 'category','length','views','rate','ratings','comments','related IDs')
-colnames(total_list_clean_2008) <- c("Video ID", "uploader", "age", 'category','length','views','rate','ratings','comments','related IDs')
+# Load in May 4th 2008 data
+table0008 <- read_raw_data("/home/rstudio/data/0008.txt")
+table0108 <- read_raw_data("/home/rstudio/data/0108.txt")
+table0208 <- read_raw_data("/home/rstudio/data/0208.txt")
+table0308 <- read_raw_data("/home/rstudio/data/0308.txt")
 
-data2007_test = total_list_clean_2007;
-data2008_test = total_list_clean_2008;
+data2008_test <- bind_tables(table0008,table0108,table0208, table0308)
+colnames(data2008_test) <- youtube_col_names
 
-testthat::expect_identical(colnames(data2007)[1], "Video ID")
-testthat::expect_identical(colnames(data2008)[10], "related IDs")
-
-
-
+rm("table0007","table0107", "table0207","table0307",
+   "table0008","table0108", "table0208","table0308" )
 ##TODO
 #' This function takes in a YouTube Data that read from raw data and
 #' Remove unnecessary data and convert category variable as factor class
@@ -106,10 +80,10 @@ testthat::expect_identical(colnames(data2008)[10], "related IDs")
 #' # wrangling_data(data2008_test)
 #'
 wrangling_data <- function(data) {
-    if (!(is.list(data))){
-        stop("Please have a valid dataframe as input!")
-    }
-    data|> select(-c(1,2,10:29)) |> mutate(category = as.factor(category))
+  if (!(is.list(data))){
+    stop("Please have a valid dataframe as input!")
+  }
+  data|> select(-c(1,2,10:29)) |> mutate(category = as.factor(category))
 }
 
 
@@ -154,14 +128,14 @@ testthat::expect_equal(ncol(data2008), 7)
 #' # fit_regression(training)
 
 fit_regression <- function(traindata){
-    stopifnot(is.data.frame(traindata))
-    lm_spec <- linear_reg() |> set_engine('lm') |> set_mode('regression')
-    
-    lm_recipe <- recipe(views~., data = traindata)
-    
-    lm_fit <- workflow() |> add_recipe(lm_recipe) |> add_model(lm_spec) |> fit(data = traindata)
-    
-    lm_fit
+  stopifnot(is.data.frame(traindata))
+  lm_spec <- linear_reg() |> set_engine('lm') |> set_mode('regression')
+  
+  lm_recipe <- recipe(views~., data = traindata)
+  
+  lm_fit <- workflow() |> add_recipe(lm_recipe) |> add_model(lm_spec) |> fit(data = traindata)
+  
+  lm_fit
 }
 
 
@@ -200,4 +174,4 @@ expect_equal(lm_test_results$.estimate[1],
 #remove all temporary variables 
 rm("datareduced", "split", "train", "test", "lm_spec", "lm_recipe", "lm_fit",
    "lm_test_results")
-rm("data2007", "data2008", "data2007_test","data2008_test")
+rm("data2007", "data2008","data2007_test","data2008_test", "youtube_col_names")

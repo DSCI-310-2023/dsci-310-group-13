@@ -26,39 +26,25 @@ library(testthat)
 
 ```{r, message=FALSE}
 # Load in May 5th 2007 data
-library(here)
 source("/home/rstudio/R/functions.R")
-base_dir <- '/home/rstudio/data/';
-total_list <- list();
+youtube_col_names <- c("Video ID", "uploader", "age", 'category','length',
+                       'views','rate','ratings','comments','related IDs')
+table0007 <- read_raw_data("/home/rstudio/data/0007.txt")
+table0107 <- read_raw_data("/home/rstudio/data/0107.txt")
+table0207 <- read_raw_data("/home/rstudio/data/0207.txt")
+table0307 <- read_raw_data("/home/rstudio/data/0307.txt")
 
-# read all files in the folder
-# this assumes that all the data files are in the same folder
-all_files <- paste0(base_dir, list.files(base_dir, recursive = TRUE))
+data2007 <- bind_tables(table0007,table0107,table0207, table0307)
+colnames(data2007) <- youtube_col_names
 
-total_list <- remove_non_text_files(all_files);
-total_list <- unlist(total_list)
+# Load in May 4th 2008 data
+table0008 <- read_raw_data("/home/rstudio/data/0008.txt")
+table0108 <- read_raw_data("/home/rstudio/data/0108.txt")
+table0208 <- read_raw_data("/home/rstudio/data/0208.txt")
+table0308 <- read_raw_data("/home/rstudio/data/0308.txt")
 
-# Splits data into 2 separate lists
-data2007names <- total_list[c(TRUE, FALSE)];
-data2008names <- total_list[c(FALSE, TRUE)];
-
-data2007temp <- list_of_data(data2007names);
-data2008temp <- list_of_data(data2008names);
-
-# removes all negative and NA values
-
-negatives_deleted_2007 = remove_negatives(data2007temp)
-negatives_deleted_2008 = remove_negatives(data2008temp)
-
-total_list_clean_2007 <- na.omit(negatives_deleted_2007)
-total_list_clean_2008 <- na.omit(negatives_deleted_2008)
-  
-#add column names to data
-colnames(total_list_clean_2007) <- c("Video ID", "uploader", "age", 'category','length','views','rate','ratings','comments','related IDs')
-colnames(total_list_clean_2008) <- c("Video ID", "uploader", "age", 'category','length','views','rate','ratings','comments','related IDs')
-
-data2007 = total_list_clean_2007;
-data2008 = total_list_clean_2008;
+data2008 <- data2008_test <- bind_tables(table0008,table0108,table0208, table0308)
+colnames(data2008) <- youtube_col_names
 ```
 
 #### Wrangling data
