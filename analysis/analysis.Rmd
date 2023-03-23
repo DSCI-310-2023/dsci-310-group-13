@@ -21,28 +21,30 @@ library(tidymodels)
 library(corrplot)
 library(car)
 library(leaps)
+library(testthat)
 ```
 
 ```{r, message=FALSE}
 # Load in May 5th 2007 data
-library(here)
 source("/home/rstudio/R/functions.R")
-table0007 <- read.delim("/home/rstudio/data/0007.txt", header = FALSE, sep = "\t", dec = ".")
-table0107 <- read.delim("/home/rstudio/data/0107.txt", header = FALSE, sep = "\t", dec = ".")
-table0207 <- read.delim("/home/rstudio/data/0207.txt", header = FALSE, sep = "\t", dec = ".")
-table0307 <- read.delim("/home/rstudio/data/0307.txt", header = FALSE, sep = "\t", dec = ".")
+youtube_col_names <- c("Video ID", "uploader", "age", 'category','length',
+                       'views','rate','ratings','comments','related IDs')
+table0007 <- read_raw_data("/home/rstudio/data/0007.txt")
+table0107 <- read_raw_data("/home/rstudio/data/0107.txt")
+table0207 <- read_raw_data("/home/rstudio/data/0207.txt")
+table0307 <- read_raw_data("/home/rstudio/data/0307.txt")
 
-data2007 <- rbind(table0007,table0107,table0207, table0307)|> na.omit()
-colnames(data2007) <- c("Video ID", "uploader", "age", 'category','length','views','rate','ratings','comments','related IDs')
+data2007 <- bind_tables(table0007,table0107,table0207, table0307)
+colnames(data2007) <- youtube_col_names
 
 # Load in May 4th 2008 data
-table0008 <- read.delim("/home/rstudio/data/0008.txt", header = FALSE, sep = "\t", dec = ".")
-table0108 <- read.delim("/home/rstudio/data/0108.txt", header = FALSE, sep = "\t", dec = ".")
-table0208 <- read.delim("/home/rstudio/data/0208.txt", header = FALSE, sep = "\t", dec = ".")
-table0308 <- read.delim("/home/rstudio/data/0308.txt", header = FALSE, sep = "\t", dec = ".")
+table0008 <- read_raw_data("/home/rstudio/data/0008.txt")
+table0108 <- read_raw_data("/home/rstudio/data/0108.txt")
+table0208 <- read_raw_data("/home/rstudio/data/0208.txt")
+table0308 <- read_raw_data("/home/rstudio/data/0308.txt")
 
-data2008 <- rbind(table0008,table0108,table0208, table0308)|> na.omit()
-colnames(data2008) <- c("Video ID", "uploader", "age", 'category','length','views','rate','ratings','comments','related IDs')
+data2008 <- data2008_test <- bind_tables(table0008,table0108,table0208, table0308)
+colnames(data2008) <- youtube_col_names
 ```
 
 #### Wrangling data
@@ -156,12 +158,7 @@ train <- training(split)
 test <- testing(split)
 
 # Fit the regression model
-lm_spec <- linear_reg() |> set_engine('lm') |> set_mode('regression')
-
-lm_recipe <- recipe(views~., data = train)
-
-lm_fit <- workflow() |> add_recipe(lm_recipe) |> add_model(lm_spec) |> fit(data = train)
-
+lm_fit <- fit_regression(train)
 lm_fit
 ```
 
@@ -184,4 +181,3 @@ head(cbind('Actual' = data2008$views,'Predicted' = predict2008))
 ```
 
 Our predicted values are several times higher than the actual 2008 values.
-

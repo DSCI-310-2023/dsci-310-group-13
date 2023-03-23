@@ -1,32 +1,68 @@
 library(tidyverse)
+library(tidymodels)
+library(corrplot)
 library(car)
 library(leaps)
-library(dplyr)
+library(here)
+library(testthat)
 
-##TODO 
-#write functions to READ DATA
+
+#' This function takes in a path to where the file located and read the data
+#'
+#' @param path_to_file The path to where the file is located 
+#'
+#' @returns a data frame that contains raw data in the file 
+#'
+#' @examples
+#' # read_raw_data("/home/rstudio/data/0007.txt")
+#' # read_raw_data("/home/rstudio/data/0107.txt")
+#'
+read_raw_data <- function(path_to_file){
+  read.delim({{path_to_file}}, header = FALSE, sep = "\t", dec = ".")
+}
+
+
+#' This function combines all the raw data tables that contains raw data in one
+#' year and remove all rows with NA in the table
+#'
+#' @param t1 The first raw data table to be combined 
+#' @param t2 The second raw data table to be combined 
+#' @param t3 The third raw data table to be combined
+#' @param t4 The fourth raw data table to be combined
+#' 
+#' @returns a data frame that contains all raw data in one year 
+#'
+#' @examples
+#' # bind_tables(table0007,table0107,table0207, table0307)
+#' # bind_tables(table0008,table0108,table0208, table0308)
+#'
+bind_tables <- function(t1, t2, t3, t4){
+  rbind(t1, t2, t3, t4)|> na.omit()
+}
+
+youtube_col_names <- c("Video ID", "uploader", "age", 'category','length',
+                       'views','rate','ratings','comments','related IDs')
+
 # Load in May 5th 2007 data
-table0007 <- read.delim("/home/rstudio/data/0007.txt", header = FALSE, sep = "\t", dec = ".")
-table0107 <- read.delim("/home/rstudio/data/0107.txt", header = FALSE, sep = "\t", dec = ".")
-table0207 <- read.delim("/home/rstudio/data/0207.txt", header = FALSE, sep = "\t", dec = ".")
-table0307 <- read.delim("/home/rstudio/data/0307.txt", header = FALSE, sep = "\t", dec = ".")
+table0007 <- read_raw_data("/home/rstudio/data/0007.txt")
+table0107 <- read_raw_data("/home/rstudio/data/0107.txt")
+table0207 <- read_raw_data("/home/rstudio/data/0207.txt")
+table0307 <- read_raw_data("/home/rstudio/data/0307.txt")
 
-data2007_test <- rbind(table0007,table0107,table0207, table0307)|> na.omit()
-colnames(data2007_test) <- c("Video ID", "uploader", "age", 'category','length',
-                             'views','rate','ratings','comments','related IDs')
+data2007_test <- bind_tables(table0007,table0107,table0207, table0307)
+colnames(data2007_test) <- youtube_col_names
 
 # Load in May 4th 2008 data
-table0008 <- read.delim("/home/rstudio/data/0008.txt", header = FALSE, sep = "\t", dec = ".")
-table0108 <- read.delim("/home/rstudio/data/0108.txt", header = FALSE, sep = "\t", dec = ".")
-table0208 <- read.delim("/home/rstudio/data/0208.txt", header = FALSE, sep = "\t", dec = ".")
-table0308 <- read.delim("/home/rstudio/data/0308.txt", header = FALSE, sep = "\t", dec = ".")
+table0008 <- read_raw_data("/home/rstudio/data/0008.txt")
+table0108 <- read_raw_data("/home/rstudio/data/0108.txt")
+table0208 <- read_raw_data("/home/rstudio/data/0208.txt")
+table0308 <- read_raw_data("/home/rstudio/data/0308.txt")
 
-data2008_test <- rbind(table0008,table0108,table0208, table0308)|> na.omit()
-colnames(data2008_test) <- c("Video ID", "uploader", "age", 'category','length',
-                             'views','rate','ratings','comments','related IDs')
-#remove temporary dataframes from the workspace
-rm("table0007", "table0008", "table0107", "table0108", "table0207", "table0208",
-   "table0307", "table0308")
+data2008_test <- bind_tables(table0008,table0108,table0208, table0308)
+colnames(data2008_test) <- youtube_col_names
+
+rm("table0007","table0107", "table0207","table0307",
+   "table0008","table0108", "table0208","table0308" )
 ##TODO
 #' This function takes in a YouTube Data that read from raw data and
 #' Remove unnecessary data and convert category variable as factor class
@@ -78,8 +114,64 @@ testthat::expect_error(wrangling_data(3),"Please have a valid dataframe as input
 testthat::expect_equal(ncol(data2007), 7)
 testthat::expect_equal(ncol(data2008), 7)
 
-##TODO
-## function for analysis
 
-rm("data2007", "data2008", "data2007_test","data2008_test")
+## Regression function:
+#' The function accepts the wrangled Youtube dataset of type dataframe and fits a linear regression
+#' model to the data.
+#'
+#' @param traindata: Typically a portion of the dataset that is used for training a regression model 
+#'
+#' @returns a linear regression model with 'views' as the response variable and the chosen variables
+#' as the explanatory variables
+#'
+#' @examples
+#' # fit_regression(training)
 
+fit_regression <- function(traindata){
+  stopifnot(is.data.frame(traindata))
+  lm_spec <- linear_reg() |> set_engine('lm') |> set_mode('regression')
+  
+  lm_recipe <- recipe(views~., data = traindata)
+  
+  lm_fit <- workflow() |> add_recipe(lm_recipe) |> add_model(lm_spec) |> fit(data = traindata)
+  
+  lm_fit
+}
+
+
+#Testing
+
+# Selecting variables for reduced model
+datareduced <- data2007 |>  select(c(views,age,ratings,comments))
+
+# Split data into training and testing set
+split <- initial_split(datareduced, prop = 3/4, strata = views)
+train <- training(split)
+test <- testing(split)
+
+# Fit the regression model
+lm_spec <- linear_reg() |> set_engine('lm') |> set_mode('regression')
+
+lm_recipe <- recipe(views~., data = train)
+
+lm_fit <- workflow() |> add_recipe(lm_recipe) |> add_model(lm_spec) |> fit(data = train)
+
+# The results our model performed
+lm_test_results <- lm_fit |> predict(test) |> bind_cols(test) |> metrics(truth = views, estimate = .pred)
+
+#test if parameter is a dataframe
+testthat::expect_error(fit_regression(c(1:5)))
+testthat::expect_error(fit_regression("hello"))
+
+#test that the model is formed properly:
+# coefficients
+expect_equal(as.numeric(tidy(lm_fit)$estimate[1]), as.numeric(lm(views~.,train)$coefficients[1]))
+# rmse
+expect_equal(lm_test_results$.estimate[1],
+             sqrt(mean((test$views - predict(lm_fit, test)$.pred)^2)))
+
+
+#remove all temporary variables 
+rm("datareduced", "split", "train", "test", "lm_spec", "lm_recipe", "lm_fit",
+   "lm_test_results")
+rm("data2007", "data2008","data2007_test","data2008_test", "youtube_col_names")
