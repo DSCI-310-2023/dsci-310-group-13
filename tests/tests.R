@@ -109,7 +109,30 @@ testthat::expect_equal(lm_test_results$.estimate[1],
                        sqrt(mean((test$views - predict(lm_fit, test)$.pred)^2)))
 
 
+
+##Test for read_uncleaned_data()
+uncleaned_2007 <- read_uncleaned_data("/home/rstudio/data/data2007_not_cleaned.txt")
+uncleaned_2008 <- read_uncleaned_data("/home/rstudio/data/data2008_not_cleaned.txt")
+
+#expect uncleaned 2007's row and column number is the same as data2007_test,
+#the same as uncleaned 2008; Also expects an error message when the input is not 
+#the designated input 
+testthat::expect_equal(ncol(uncleaned_2007), ncol(data2007_test))
+testthat::expect_equal(ncol(uncleaned_2008), ncol(data2008_test))
+testthat::expect_equal(nrow(uncleaned_2007), nrow(data2007_test))
+testthat::expect_equal(nrow(uncleaned_2008), nrow(data2008_test))
+
+testthat::expect_error(read_uncleaned_data(""),"Please look at the data folder and provide a valid input!")
+testthat::expect_error(read_uncleaned_data("/home/rstudio/data/0008.txt"),"Please look at the data folder and provide a valid input!")
+
+
+
+
+
 #remove all temporary variables 
 rm("datareduced", "split", "train", "test", "lm_spec", "lm_recipe", "lm_fit",
    "lm_test_results")
 rm("data2007", "data2008","data2007_test","data2008_test", "youtube_col_names")
+
+#remove all temporary tables
+rm(list = ls())
