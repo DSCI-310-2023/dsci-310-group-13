@@ -4,5 +4,5 @@ load: /home/rstudio/R/load.R
 
 .PHONY: clean
 clean:
-	rm -f /home/rstudio/data/data2008_not_cleaned.txt /home/rstudio/data/data2008_not_cleaned.txt
+	rm -f /home/rstudio/data/data2007_not_cleaned.txt /home/rstudio/data/data2008_not_cleaned.txt
 	rm -f *.html 
