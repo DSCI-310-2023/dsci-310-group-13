@@ -135,18 +135,34 @@ lm_fit
 \
 Although there is a low p-value for the coefficients, the adjusted R-squared value is not particularly high and an extremely high standard error.
 \
+\
 ```{r, include=TRUE, echo=FALSE}
 # Lets look at how well our model performed
+# code adapted from https://cran.r-project.org/web/packages/kableExtra/vignettes/awes# ome_table_in_html.html
 lm_test_results <- read.csv("/home/rstudio/output/lm_test_results.csv")
-knitr::kable(lm_test_results, caption = "Metrics of the fitted model")
+
+kableExtra::kbl(lm_test_results, caption = "Metrics of the fitted model") %>%
+  kableExtra::kable_styling(bootstrap_options = "striped", 
+                            full_width = F, position= "left")
 ```
 \
 It seems like the residual mean squared error is still enormously high, but the RMSE is smaller than that of the full model.
 \
+\
 ```{r, include=TRUE, echo=FALSE}
 # Lets see if our model can predict the 2008 values well
 predict_vs_obs <- read.csv("/home/rstudio/output/predict_vs_obs.csv")
-knitr::kable(predict_vs_obs, caption = "Table of predicted and observed values")
+
+
+# code adapted from https://cran.r-project.org/web/packages/kableExtra/vignettes/awes# ome_table_in_html.html
+kableExtra::kbl(predict_vs_obs, caption = "Table of predicted and observed values") %>%
+  kableExtra::kable_styling(bootstrap_options = "striped", 
+                            full_width = F, position= "left")
+  
+  
+  
+  
+
 ```
 \
 Our predicted values are several times higher than the actual 2008 values.

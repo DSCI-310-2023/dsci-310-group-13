@@ -39,6 +39,7 @@ RUN Rscript -e "remotes::install_version('tidymodels','1.0.0')"
 RUN Rscript -e "remotes::install_version('leaps','3.1')"
 RUN Rscript -e "remotes::install_version('testthat','3.1.6')"
 RUN Rscript -e "remotes::install_version('here','1.0.1')"
+RUN Rscript -e "remotes::install_version('kableExtra','1.3.4')"
 
 #set home directory to /home/rstudio
 WORKDIR /home/rstudio
@@ -60,6 +61,7 @@ COPY --chown=rstudio:rstudio ./R/figures.R ./R/figures.R
 COPY --chown=rstudio:rstudio ./Makefile .
 COPY --chown=rstudio:rstudio ./tests/tests.R ./tests/tests.R
 COPY --chown=rstudio:rstudio ./analysis/analysis.Rmd ./analysis/analysis.Rmd
+COPY --chown=rstudio:rstudio ./R/analysis.R ./R/analysis.R
 
 #fix the error in container:
 #Warning message:
