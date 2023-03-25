@@ -13,11 +13,10 @@ library(docopt)
 opt <- docopt(doc)
 
 main <- function(input1, input2) {
-  if (!(is.list(input1)) || !(is.list(input2))){
-    stop("Please have a valid dataframe as input!")
-  }
-  input1|> select(-c(1,2,10:29)) |> mutate(category = as.factor(category));
-  input2|> select(-c(1,2,10:29)) |> mutate(category = as.factor(category));
+  table1 <- read_uncleaned_data(input1);
+  table2 <- read_uncleaned_data(input2);
+  table1|> select(-c(1,2,10:29)) |> mutate(category = as.factor(category));
+  table2|> select(-c(1,2,10:29)) |> mutate(category = as.factor(category));
 }
 
 main(opt$input_one, opt$input_two)
