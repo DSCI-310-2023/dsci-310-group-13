@@ -60,6 +60,7 @@ COPY --chown=rstudio:rstudio ./R/figures.R ./R/figures.R
 COPY --chown=rstudio:rstudio ./Makefile .
 COPY --chown=rstudio:rstudio ./tests/tests.R ./tests/tests.R
 COPY --chown=rstudio:rstudio ./analysis/analysis.Rmd ./analysis/analysis.Rmd
+COPY --chown=rstudio:rstudio ./R/analysis.R ./R/analysis.R
 
 #fix the error in container:
 #Warning message:
