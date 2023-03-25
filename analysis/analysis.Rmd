@@ -137,18 +137,16 @@ Although there is a low p-value for the coefficients, the adjusted R-squared val
 \
 ```{r, include=TRUE, echo=FALSE}
 # Lets look at how well our model performed
-lm_test_results <- lm_fit |> predict(test) |> bind_cols(test) |> metrics(truth = views, estimate = .pred)
-
-lm_test_results
+lm_test_results <- read.csv("/home/rstudio/output/lm_test_results.csv")
+knitr::kable(lm_test_results, caption = "Metrics of the fitted model")
 ```
 \
 It seems like the residual mean squared error is still enormously high, but the RMSE is smaller than that of the full model.
 \
 ```{r, include=TRUE, echo=FALSE}
 # Lets see if our model can predict the 2008 values well
-data2008reduced <- data2008 |> select(c(age,ratings,comments))
-predict2008 <- predict(lm_fit,data2008reduced)
-head(cbind('Actual' = data2008$views,'Predicted' = predict2008))
+predict_vs_obs <- read.csv("/home/rstudio/output/predict_vs_obs.csv")
+knitr::kable(predict_vs_obs, caption = "Table of predicted and observed values")
 ```
 \
 Our predicted values are several times higher than the actual 2008 values.
