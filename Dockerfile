@@ -55,6 +55,7 @@ COPY --chown=rstudio:rstudio ./data/0308.txt ./data/0308.txt
 #
 COPY --chown=rstudio:rstudio ./R/functions.R ./R/functions.R
 COPY --chown=rstudio:rstudio ./R/load.R ./R/load.R
+COPY --chown=rstudio:rstudio ./R/tidy.R ./R/tidy.R
 COPY --chown=rstudio:rstudio ./Makefile .
 COPY --chown=rstudio:rstudio ./tests/tests.R ./tests/tests.R
 COPY --chown=rstudio:rstudio ./analysis/analysis.Rmd ./analysis/analysis.Rmd
