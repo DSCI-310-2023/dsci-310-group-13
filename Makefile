@@ -18,4 +18,4 @@ clean:
 	rm -f /home/rstudio/data/data2007_not_cleaned.txt /home/rstudio/data/data2008_not_cleaned.txt
 	rm -f /home/rstudio/data/data2007_cleaned.txt /home/rstudio/data/data2008_cleaned.txt
 	rm -f /home/rstudio/output/*.png
-	rm -f *.html 
+	rm -f /home/rstudio/analysis/*.html 
