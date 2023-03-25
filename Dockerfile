@@ -39,6 +39,7 @@ RUN Rscript -e "remotes::install_version('tidymodels','1.0.0')"
 RUN Rscript -e "remotes::install_version('leaps','3.1')"
 RUN Rscript -e "remotes::install_version('testthat','3.1.6')"
 RUN Rscript -e "remotes::install_version('here','1.0.1')"
+RUN Rscript -e "remotes::install_version('kableExtra','1.3.4')"
 
 #set home directory to /home/rstudio
 WORKDIR /home/rstudio

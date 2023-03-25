@@ -3,8 +3,6 @@
 "
 Loads in tidy data and generates the tables for the preliminary analysis and 
 analysis section
-
-
 Usage: /home/R/analysis.R <input_dir1> <input_dir2> <output_dir> 
 " -> doc
 
@@ -45,6 +43,9 @@ main <- function(input_dir1, input_dir2, out_dir){
   
   predict_vs_obs <- head(cbind('Actual' = data2008$views,"Predicted" = predict2008))
   write_csv(predict_vs_obs, file.path(out_dir, "predict_vs_obs.csv"))
+  
+  #remove all temporary tables
+  rm(list = ls())
 }
 
 main(opt$input_dir1,opt$input_dir2, opt$output_dir)
