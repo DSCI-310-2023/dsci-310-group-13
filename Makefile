@@ -29,3 +29,4 @@ clean:
 	rm -f /home/rstudio/output/*.csv
 	rm -f /home/rstudio/analysis/*.html
 	rm -f *.html
+	rm -f -d /home/rstudio/output/
