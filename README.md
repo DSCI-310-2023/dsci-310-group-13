@@ -32,7 +32,7 @@ To **generate the report**, please follow the steps below:
    ```
 
 ## Other make commands:
-1. The following command can be used to read the raw YouTube data files for 2007 and 2008 and write out as *data2007_not_cleaned.txt* and *data2008_not_cleaned.txt* into the folder 'data/' in the container.<br><br>
+1. The following command can be used to read the raw YouTube data files for 2007 and 2008 and write out as **data2007_not_cleaned.txt** and **data2008_not_cleaned.txt**. These two files will be saved into the folder **'data/'** in the container.
    ```
    make load
    ```
@@ -40,7 +40,7 @@ To **generate the report**, please follow the steps below:
    ```
    make tidy
    ```
-    **Note**: `make load` should be run before `make tidy`<<br><br>
+    **Note**: `make load` should be run before `make tidy`<br><br>
 
 3. The following command can be used to create four figures used in the report, into the folder 'output/' in the container.
    ```
