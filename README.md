@@ -36,12 +36,12 @@ To **generate the report**, please follow the steps below:
    ```
    make load
    ```
-2. The following command can be used to remove unnecessary columns and converts category variable as factor class and save the cleaned data sets, which will be called as **data2007_cleaned.txt** and **data2008_cleaned.txt**, into the folder 'data/' in the container.
+2. The following command can be used to remove unnecessary columns and converts category variable as factor class and save the cleaned data sets, which will be called as **data2007_cleaned.txt** and **data2008_cleaned.txt**, into the folder **'data/'** in the container.
    ```
    make tidy
    ```
     **Note**: `make load` should be run before `make tidy`<br><br>
-3. The following command can be used to create four figures used in the report, into the folder 'output/' in the container.
+3. The following command can be used to create four figures used in the report, into the folder **'output/'** in the container.
    ```
    make figures
    ```
@@ -53,7 +53,7 @@ To **generate the report**, please follow the steps below:
    ```
     **Note**: `make load` and `make tidy` should be run before `make models`<br><br>
 
-5. The following command can be used to create the report, which will be saved into the folder 'analysis/' in the container.
+5. The following command can be used to create the report, which will be saved into the folder **'analysis/'** in the container.
    ```
    make render
    ```
