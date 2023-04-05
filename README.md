@@ -4,7 +4,8 @@
 ## Contributors: Chris Cai, Maggie Dong, Billy Jia
 
 ## Summary:
-Youtube is one of the most popular websites in the world. Many people at some point in their lives may have thought whether or not they wanted to become a Youtuber as a future job. Data research and analysis would help any person looking to become a Youtuber to figure out how certain categories of data impact the number of views on a video. This analysis will try to predict the future view counts of Youtube videos based on previous view counts. The dataset used tracks categories like video ID, uploader, **age**, category, **length**, **views**, **rate**, **rating**, **comment count** and related IDs, but only the data in bold will be explored in the analysis as the other features are not important towards the prediction. **Note**: the report will be under `'analysis/'` folder in the container after following the steps in the section below - "Procedure of generating the report". 
+Youtube is one of the most popular websites in the world. Many people at some point in their lives may have thought whether or not they wanted to become a Youtuber as a future job. Data research and analysis would help any person looking to become a Youtuber to figure out how certain categories of data impact the number of views on a video. This analysis will try to predict the future view counts of Youtube videos based on previous view counts. The dataset used tracks categories like video ID, uploader, **age**, category, **length**, **views**, **rate**, **rating**, **comment count** and related IDs, but only the data in bold will be explored in the analysis as the other features are not important towards the prediction. 
+**Note**: the report will be under `'analysis/'` folder in the container after following the steps in the section below - "Procedure of generating the report". 
 
 ## Procedure of generating the report
 To **setup**, please follow the steps below: 
@@ -23,6 +24,7 @@ To **setup**, please follow the steps below:
    ```
 5. Login with with Username: `rstudio` , and Password: `asdf`. 
 
+
 To **generate the report**, please follow the steps below: 
 1. In the terminal of the Rstudio container, use the following command to to generate the report, all the figures, tables and data files:
    ```
@@ -40,7 +42,7 @@ To **generate the report**, please follow the steps below:
    ```
 **Note**: `make load` should be run before `make tidy`
 
-3. The following command can be used to create four figures used in the report, into the folder 'data/' in the container.
+3. The following command can be used to create four figures used in the report, into the folder 'output/' in the container.
    ```
    make figures
    ```
@@ -64,7 +66,45 @@ To **generate the report**, please follow the steps below:
    ```
 
 ## Dependencies:
-R version 4.2.2, R packages, analysis.Rmd, and raw data used can be found in the Dockerfile
+Docker
+R version 4.2.2, R packages, analysis.Rmd, Makefile, and raw data used can be found in the Dockerfile
+R packages with version:
+- 'remote', latest
+- 'base64enc','0.1-3'
+- 'digest','0.6.31'
+- 'evaluate','0.20'
+- 'glue','1.6.2'
+- 'xfun','0.37'
+- 'highr','0.10'
+- 'rlang','1.0.6'
+- 'fastmap','1.1.0'
+- 'ellipsis','0.3.2'
+- 'htmltools','0.5.4'
+- 'jsonlite','1.8.4'
+- 'yaml','2.3.7'
+- 'knitr','1.42'
+- 'magrittr','2.0.3'
+- 'commonmark','1.8.1'
+- 'markdown','1.5'
+- 'mime','0.12'
+- 'bslib','0.4.2'
+- 'jquerylib','0.1.4'
+- 'cli','3.6.0'
+- 'lifecycle','1.0.3'
+- 'stringi','1.7.12'
+- 'vctrs','0.5.2'
+- 'stringr','1.5.0'
+- 'tinytex','0.44'
+- 'rmarkdown','2.20'
+- 'tidyverse','1.3.2'
+- 'car','3.1-1'
+- 'corrplot','0.92'
+- 'tidymodels','1.0.0'
+- 'leaps','3.1'
+- 'testthat','3.1.6'
+- 'here','1.0.1'
+- 'kableExtra','1.3.4'
+
 
 ## License
 The predict-youtube-future-views project is made available under the **Attribution 4.0 International** ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/))
