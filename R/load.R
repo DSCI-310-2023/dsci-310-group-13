@@ -11,7 +11,7 @@ from https://github.com/UBC-DSCI/dsci-310-individual-assignment-repro-reports
 Usage: /home/rstudio/R/load.R <input_one> <input_two> <input_three> <input_four> <input_five> <input_six> <input_seven> <input_eight> <output_one> <output_two>  
 " -> doc
 
-source("/home/rstudio/R/functions.R")
+library(youtubeFunction)
 
 library(docopt)
 opt <- docopt(doc)
@@ -37,7 +37,7 @@ main <- function(input1, input2, input3, input4, input5, input6,
   data2007 <- bind_tables(table0007,table0107,table0207, table0307)
   colnames(data2007) <- youtube_col_names
   
-  data2008 <- data2008_test <- bind_tables(table0008,table0108,table0208, table0308)
+  data2008 <- bind_tables(table0008,table0108,table0208, table0308)
   colnames(data2008) <- youtube_col_names
   
   #save the uncleaned 2007 data 
