@@ -22,11 +22,12 @@ To **setup**, please follow the steps below:
    ```
    http://localhost:8787/
    ```
-5. Login with Username:
+5. Login with:
+   - Username:
    ```
    rstudio
    ```
-   Password: 
+   - Password: 
    ```
    asdf
    ```
