@@ -43,7 +43,8 @@ RUN Rscript -e "remotes::install_version('kableExtra','1.3.4')"
 
 #set home directory to /home/rstudio
 WORKDIR /home/rstudio
-#copy the data used by project to the container
+
+#copy the data folder used by project to the container
 COPY --chown=rstudio:rstudio ./data/0007.txt ./data/0007.txt
 COPY --chown=rstudio:rstudio ./data/0107.txt ./data/0107.txt
 COPY --chown=rstudio:rstudio ./data/0207.txt ./data/0207.txt
@@ -53,15 +54,19 @@ COPY --chown=rstudio:rstudio ./data/0008.txt ./data/0008.txt
 COPY --chown=rstudio:rstudio ./data/0108.txt ./data/0108.txt
 COPY --chown=rstudio:rstudio ./data/0208.txt ./data/0208.txt
 COPY --chown=rstudio:rstudio ./data/0308.txt ./data/0308.txt
-#
-COPY --chown=rstudio:rstudio ./R/functions.R ./R/functions.R
+
+#copy the required .R files used 
 COPY --chown=rstudio:rstudio ./R/load.R ./R/load.R
 COPY --chown=rstudio:rstudio ./R/tidy.R ./R/tidy.R
 COPY --chown=rstudio:rstudio ./R/figures.R ./R/figures.R
-COPY --chown=rstudio:rstudio ./Makefile .
-COPY --chown=rstudio:rstudio ./tests/tests.R ./tests/tests.R
-COPY --chown=rstudio:rstudio ./analysis/analysis.Rmd ./analysis/analysis.Rmd
 COPY --chown=rstudio:rstudio ./R/analysis.R ./R/analysis.R
+
+#copy the Makefile
+COPY --chown=rstudio:rstudio ./Makefile .
+
+#copy the analysis.Rmd file
+COPY --chown=rstudio:rstudio ./analysis/analysis.Rmd ./analysis/analysis.Rmd
+
 
 #fix the error in container:
 #Warning message:
@@ -74,3 +79,6 @@ COPY --chown=rstudio:rstudio ./R/analysis.R ./R/analysis.R
 RUN apt-get update && apt-get -y --no-install-recommends install libxt6
 
 RUN Rscript -e "remotes::install_version('devtools','2.4.5')"
+
+#install the package made for project
+RUN Rscript -e "devtools::install_github('DSCI-310/dsci-310-group-13-pkg')"
