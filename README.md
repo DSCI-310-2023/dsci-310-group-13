@@ -47,7 +47,7 @@ To **generate the report**, please follow the steps below:
    ```
     **Note**: `make load` and `make tidy` should be run before `make figures`<br><br>
 
-4. To Do
+4. The following command can be used to load in tidy data and generates the tables for the preliminary analysis and analysis section
    ```
    make models
    ```
@@ -103,6 +103,7 @@ R packages with version:<br>
 - 'testthat', '3.1.6'
 - 'here', '1.0.1'
 - 'kableExtra', '1.3.4'
+- 'youtubeFunction', '1.0.0'
 
 
 ## License
