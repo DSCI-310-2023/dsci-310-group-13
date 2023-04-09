@@ -10,7 +10,11 @@ from https://github.com/UBC-DSCI/dsci-310-individual-assignment-repro-reports
 Usage: /home/rstudio/R/figures.R <input_one> <input_two> <output_one>  
 " -> doc
 
-source("/home/rstudio/R/functions.R")
+library(corrplot)
+library(tidymodels)
+library(tidyverse)
+library(car)
+library(leaps)
 library(docopt)
 opt <- docopt(doc)
 

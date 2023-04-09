@@ -10,10 +10,9 @@ library(docopt)
 library(tidyverse)
 library(tidymodels)
 library(car)
+library(youtubeFunction)
 
 opt <- docopt(doc)
-
-source("/home/rstudio/R/functions.R")
 
 main <- function(input_dir1, input_dir2, out_dir){
   

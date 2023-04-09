@@ -14,15 +14,9 @@ library(tidymodels)
 library(corrplot)
 library(car)
 library(leaps)
-library(testthat)
+library(youtubeFunction)
 ```
 
-```{r, message=FALSE, include=TRUE, echo=FALSE}
-# Load the functions
-source("/home/rstudio/R/functions.R")
-```
-
-#### Wrangling data
 We decide to immediately remove some of the variables presented in the datasets. This included `uploader`,`video ID`, and `related IDs` because these variables appear to be unique to the videos itself and not affect video views as a whole.
 
 ```{r, include=TRUE, echo=FALSE}
@@ -39,7 +33,6 @@ head(data2007)
 \
 
 **Features: **
-\
 \
 **-Age:** an integer number of days between the date when the video was uploaded and Feb.15, 2007
 

@@ -11,7 +11,7 @@ from https://github.com/UBC-DSCI/dsci-310-individual-assignment-repro-reports
 Usage: /home/rstudio/R/tidy.R <input_one> <input_two> <output_one> <output_two>  
 " -> doc
 
-source("/home/rstudio/R/functions.R")
+library(youtubeFunction)
 
 library(docopt)
 opt <- docopt(doc)
