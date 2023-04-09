@@ -158,4 +158,32 @@ kableExtra::kbl(predict_vs_obs, caption = "Table of predicted and observed value
 
 ```
 \
+### Discussion
 Our predicted values are several times higher than the actual 2008 values.
+
+There could be many reasons for why the predicted values are significantly higher. Youtube videos being uploaded earlier is not necessary for a video to be popular. We know now based on market research that the first 48 hours of a Youtube video being uploaded is the most important. If a video has 0 views, Youtube will stop displaying the video as it does not drive traffic towards their website. If a video can make it past the 48 hours with some amount of views, it is possible to see an increase in views over the span of 3 to 6 months (Clark, 2019). Meaning that if a video does not get any views, it will likely not get any views in the future either. This would slightly impact our data analysis as there are many more videos that do not get any views than videos that do get views. Making our error values much higher than what we had assumed.
+
+Another reason our error values could be high is due to user influence. Youtube has gone through many phases, many genres of videos have been the top category on Youtube since its genesis. There is a possibility that during the period between 2007 and 2008, traffic on videos was not as high due to a lull in user interest in the videos. What a user likes to watch is constantly changing, so what is popular in 2007 might not be popular again in 2008, which results in the large gap between the actual values of the 2008 May views.
+
+Furthermore, with its ever growing user base, some of the explanatory variables we have included in our model may not be as significant. For example, comments, the number of comments required to have an affect on video views could increase due to Youtube having a more saturated audience.
+
+A way in which to improve our model would be removing certain outliers of the videos that get zero to ten views, but not the upper end of videos with millions of views. The reason we would get rid of the lower view count videos is because while this is a fairly large portion of our dataset, since these videos do not get any meaningful information out of them, removing them would be better for our model. We would keep the upper end of videos as theses videos would be a good reference point for many others who want to have a video get popular on Youtube, and represent what quantitative goals people should strive for when trying to make videos.
+
+Another approach to improving the model is potentially adding in more variables. This would help the model fit better with the data, but the downside is the residual mean squared error would increase. Other than adding more variables, applying a transformation to some of the explanatory variables may have provided a more accurate model; however, the interpretability of the regression model would become more complicated.
+
+### Future Questions
+A future question this type of analysis would ultimately lead to would be something like "What is the number 1 influence over the number of views in a video?" The current trend on Youtube is for the Youtuber to say to "like" the video, which would impact the rating category, or to leave a comment, which would increase the comment count. But short videos tend to better than long videos, and songs do better than videos that are seconds long (Macmanus, R). So what's the best way to break out into the Youtube scene?
+
+“From 2006 to 2009, most channels fall into the Music category, reaching a high in 2009 when more than 20% of all created channels would upload mainly Music videos. Entertainment, People & Blogs and Education were also continuously popular among creators during these years. However, from 2010 onwards, the majority of newly created channels were People & Blogs, coming close to 75% in 2016. Gaming started to be the second most channel category in 2012 and has remained in that place ever since.” (Bärtl, 2018)
+
+### Conclusion
+Using an exhaustive search for model selection, we were determined to use the variables age,comments, and ratings to predict the views of May 4th 2008. The model was trained on a set of training data before tested with a smaller set of testing data. We used this model to predict the views in 2008 and the predicted values were several times higher than the actual values. This was to be expected considering the ever-changing and growing Youtube, and so, we are hesitant to use this mode in a professional setting given the unreliable predictions.
+
+### Citations
+Zhou, R., Khemmarat, S., Gao, L., Wan, J., & Zhang, J. (2016). How YouTube videos are discovered and its impact on video views. Multimedia Tools and Applications, 75, 6035-6058.
+
+Clark, D. (2019). How long does it take for a YouTube video to get views? How to get more views and subscribers on YouTube. from https://www.socialvideoplaza.com/en/articles/how-long-before-youtube-video-gets-views
+
+Bärtl, M. (2018). YouTube channels, uploads and views: A statistical analysis of the past 10 years. Convergence, 24(1), 16-32.
+
+Macmanus, R. (2018, October 01). Top 10 youtube videos of All Time, 2008 edition. Retrieved February 19, 2023, from https://readwrite.com/top_10_youtube_videos_of_all_time_2008/
