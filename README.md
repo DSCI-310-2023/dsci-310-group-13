@@ -47,13 +47,13 @@ To **generate the report**, please follow the steps below:
    ```
     **Note**: `make load` and `make tidy` should be run before `make figures`<br><br>
 
-4. The following command can be used to load in tidy data and generates the tables for the preliminary analysis and analysis section
+4. The following command can be used to load in tidy data and generates the tables for the preliminary analysis and analysis section. The tables will be saved into the folder **'output/'** in the container.
    ```
    make models
    ```
     **Note**: `make load` and `make tidy` should be run before `make models`<br><br>
 
-5. The following command can be used to create the report, which will be saved into the folder **'analysis/'** in the container.
+5. The following command can be used to create the report into a html file, which will be called **'analysis.html'** and saved into the folder **'analysis/'** in the container.
    ```
    make render
    ```
