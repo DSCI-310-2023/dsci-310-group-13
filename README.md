@@ -22,7 +22,7 @@ To **setup**, please follow the steps below:
    ```
    http://localhost:8787/
    ```
-5. Login with:
+5. Login with:<br><br>
    - Username:
    ```
    rstudio
