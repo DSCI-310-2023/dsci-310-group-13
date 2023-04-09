@@ -22,8 +22,15 @@ To **setup**, please follow the steps below:
    ```
    http://localhost:8787/
    ```
-5. Login with with Username: `rstudio` , and Password: `asdf`. 
-
+5. Login with:<br><br>
+   - Username:
+   ```
+   rstudio
+   ```
+   - Password: 
+   ```
+   asdf
+   ```
 
 To **generate the report**, please follow the steps below: 
 1. In the terminal of the Rstudio container, use the following command to to generate the report, all the figures, tables and data files:
@@ -47,13 +54,13 @@ To **generate the report**, please follow the steps below:
    ```
     **Note**: `make load` and `make tidy` should be run before `make figures`<br><br>
 
-4. To Do
+4. The following command can be used to load in tidy data and generates the tables for the preliminary analysis and analysis section. The tables will be saved into the folder **'output/'** in the container.
    ```
    make models
    ```
     **Note**: `make load` and `make tidy` should be run before `make models`<br><br>
 
-5. The following command can be used to create the report, which will be saved into the folder **'analysis/'** in the container.
+5. The following command can be used to create the report, which will be called **'analysis.html'** and saved into the folder **'analysis/'** in the container.
    ```
    make render
    ```
@@ -103,6 +110,7 @@ R packages with version:<br>
 - 'testthat', '3.1.6'
 - 'here', '1.0.1'
 - 'kableExtra', '1.3.4'
+- 'youtubeFunction', '1.0.0'
 
 
 ## License
