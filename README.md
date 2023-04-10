@@ -12,11 +12,11 @@ To **setup**, please follow the steps below:
 1. Install [Docker](https://www.docker.com/get-started)
 2. In the terminal, use the following command to download the Docker image:
    ```
-   docker pull chrisckh/dsci-310-project-group-13:0.0.0
+   docker pull chrisckh/dsci-310-project-group-13:1.0.0
    ```
 3. Use the following command to run the Rstudio container:
    ```
-   docker run --rm -p 8787:8787 -e PASSWORD="asdf" chrisckh/dsci-310-project-group-13:0.0.0
+   docker run --rm -p 8787:8787 -e PASSWORD="asdf" chrisckh/dsci-310-project-group-13:1.0.0
    ```
 4. Use the following to open the container in a web browser:
    ```

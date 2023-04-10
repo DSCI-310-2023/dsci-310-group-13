@@ -1,13 +1,30 @@
-# Predicting Youtube View Count in 2007/2008
+---
+title: 'Predicting Youtube View Count in 2007/2008'
+author: "Maggie Dong & Billy Jia & Chris Cai"
+  
+---
+\
 
 ### Introduction
 
-After being acquired by Google in 2006, Youtube obtained a rapid growth in popularity resulting in a growing community. The goal of this project is to use the data of 2007 to predict the view of videos in 2008. We will be using datasets from https://netsg.cs.sfu.ca/youtubedata/. 
+After being acquired by Google in 2006, Youtube obtained a rapid growth in popularity resulting in a growing community. In 2022, Youtube was the second most trafficked site in the world, only behind Google, sitting at 74.8 billion visited worldwide according to Statista. Some people may have wondered if they could persue Youtube as a potential career. As a result, researching about certain analytics would drive their videos to go "viral" as we know today. Youtube only displays a certain amount of data for the viewers on first glance. While certain features of Youtube have since been removed since 2007 to 2008, most notibly the rating feature, the dataset we have chosen still includes the information, and we will be utilizing it in our analysis. Below included is a screenshot of what an example Youtube webpage would look like in 2007.
+\
+\
+![](https://preview.redd.it/165ijbwo32171.png?auto=webp&s=5c00315a5a37d5e6fc2c37c5ddfa58df8f295aba)
+\
+\
+**The goal of this project is to use the data of 2007 to predict the view of videos in 2008.**
+
+We will be using datasets from https://netsg.cs.sfu.ca/youtubedata/. This website compiles data from 2007 to 2008 of all Youtube videos crawled on their website. The process of which is described in more detail on the actual website. The key categories parsed are video ID, uploader, **age**, category, **length**, **views**, **rate**, **rating**, **comment count** and related IDs, but only the points in **bold** will be explored in this analysis.
+
+The two days we have chosen are May 5th, 2007 and May 4th, 2008. The reason for picking these two days is because these days are weekends, and both should represent a normal Youtube traffick day, i.e, it is not a day in which there is a holiday or otherwise that would significantly increase Youtube view count on those specific days.
+
+**“Discovering the major sources that drive views to a video and understanding how they impact the view growth pattern have become interesting topics for researchers as well as advertisers, media companies, or anyone who wish to have a shortcut to stardom”. (Zhou et al., 2016)**
 
 
 ### Methods
 
-```{r, message=FALSE,warning=FALSE, include=TRUE, echo=FALSE}
+```{r setup, message=FALSE,warning=FALSE, include=TRUE, echo=FALSE}
 # Setup
 library(tidyverse)
 library(tidymodels)
@@ -19,7 +36,7 @@ library(youtubeFunction)
 
 We decide to immediately remove some of the variables presented in the datasets. This included `uploader`,`video ID`, and `related IDs` because these variables appear to be unique to the videos itself and not affect video views as a whole.
 
-```{r, include=TRUE, echo=FALSE}
+```{r load, include=TRUE, echo=FALSE}
 #load the cleaned datasets
 data2007 = read.delim("/home/rstudio/data/data2007_cleaned.txt", 
                       sep = "\t", dec = ".", header = TRUE)
@@ -52,7 +69,7 @@ head(data2007)
 
 ### Preliminary Analysis
 
-```{r, include=TRUE, echo=FALSE}
+```{r figureOne, include=TRUE, echo=FALSE}
 knitr::include_graphics("/home/rstudio/output/figure_1.png")
 ```
 
@@ -60,7 +77,7 @@ knitr::include_graphics("/home/rstudio/output/figure_1.png")
 
 We can observe that most variables do not a have linear relationship with the predictor variable, only `ratings` has a slight positive linear relationship. Some variables like `length` and `comments` may benefit from a logarithmic transformation.
 
-```{r, include=TRUE, echo=FALSE}
+```{r figureTwo, include=TRUE, echo=FALSE}
 knitr::include_graphics("/home/rstudio/output/figure_2.png")
 ```
 
@@ -68,7 +85,7 @@ knitr::include_graphics("/home/rstudio/output/figure_2.png")
 \
 \
 
-```{r, include=TRUE, echo=FALSE}
+```{r figureThree, include=TRUE, echo=FALSE}
 knitr::include_graphics("/home/rstudio/output/figure_3.png")
 ```
 
@@ -76,7 +93,7 @@ knitr::include_graphics("/home/rstudio/output/figure_3.png")
 
 Taking a look at the correlation plot, we can see that `ratings` and `comments` have the strong positive relationship with the predictive variable `views`. Meanwhile, the other explanatory variables have a very weak relationship with `views`. `ratings` has a positive correlation with `view` and `comments` too. Because there are explanatory variables with correlation against each other, we check if multicollinearity is significant by taking a look at the VIF scores.
 
-```{r, include=TRUE, echo=FALSE}
+```{r vif, include=TRUE, echo=FALSE}
 vif(lm(views~.,data2007))
 ```
 
@@ -85,9 +102,10 @@ vif(lm(views~.,data2007))
 The VIF values of the variables are not particularly big, so multicollinearity would not affect the model significantly. 
 \
 \
+
 ### Model Selection
 
-```{r, include=TRUE, echo=FALSE}
+```{r bestmethod, include=TRUE, echo=FALSE}
 # Find the best model for each size
 bestmod <- regsubsets(views~.,data2007,method='exhaustive')
 summary(bestmod)
@@ -97,7 +115,7 @@ summary(bestmod)
 Looking at the selection algorithm, variables like `age`. `ratings`, and `comments` appear in most subsets. On the other hand, `category` did not appear consistently in the subsets, while `length` and `rate` were present in half of the displayed subsets.
 \
 \
-```{r, include=TRUE, echo=FALSE}
+```{r figureFour, include=TRUE, echo=FALSE}
 knitr::include_graphics("/home/rstudio/output/figure_4.png")
 ```
 
@@ -105,17 +123,19 @@ knitr::include_graphics("/home/rstudio/output/figure_4.png")
 \
 \
 A well-fitted model would have a high adjusted $R^2$ and low BIC values, but these metrics are not particularly prioritized because our end goal is prediction, so we rather prioritize reducing RMSE. However, this figure suggests a large model would fit well with the data.
+\
+\
 
 ### Analysis
 
 We choose to use 2 explanatory variables: `age` and `ratings` to predict our response variable. While having a larger model would fit our data better, we hope that minimizing the number of explanatory variables will reduce RMSE.
 
-```{r, include=TRUE, echo=FALSE}
+```{r reduce, include=TRUE, echo=FALSE}
 # Selecting variables for reduced model
 datareduced <- data2007 |>  select(c(views,age,ratings,comments))
 ```
 
-```{r, include=TRUE, echo=FALSE}
+```{r fit, include=TRUE, echo=FALSE}
 # Split data into training and testing set
 split <- initial_split(datareduced, prop = 3/4, strata = views)
 train <- training(split)
@@ -129,7 +149,7 @@ lm_fit
 Although there is a low p-value for the coefficients, the adjusted R-squared value is not particularly high and an extremely high standard error.
 \
 \
-```{r, include=TRUE, echo=FALSE}
+```{r performance, include=TRUE, echo=FALSE}
 # Lets look at how well our model performed
 # code adapted from https://cran.r-project.org/web/packages/kableExtra/vignettes/awes# ome_table_in_html.html
 lm_test_results <- read.csv("/home/rstudio/output/lm_test_results.csv")
@@ -142,7 +162,7 @@ kableExtra::kbl(lm_test_results, caption = "Metrics of the fitted model") %>%
 It seems like the residual mean squared error is still enormously high, but the RMSE is smaller than that of the full model.
 \
 \
-```{r, include=TRUE, echo=FALSE}
+```{r predict, include=TRUE, echo=FALSE}
 # Lets see if our model can predict the 2008 values well
 predict_vs_obs <- read.csv("/home/rstudio/output/predict_vs_obs.csv")
 
@@ -153,6 +173,7 @@ kableExtra::kbl(predict_vs_obs, caption = "Table of predicted and observed value
                             full_width = F, position= "left")
 ```
 \
+
 ### Discussion
 
 Our predicted values are several times higher than the actual 2008 values.
