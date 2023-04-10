@@ -14,7 +14,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag chrisckh/dsci-310-project-group-13:0.0.0
+      run: docker build . --file Dockerfile --tag chrisckh/dsci-310-project-group-13:1.0.0
       
     - name: Log in to Docker Hub
       uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9 
@@ -23,4 +23,4 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
     
     - name: push to Docker hub
-      run: docker push chrisckh/dsci-310-project-group-13:0.0.0
+      run: docker push chrisckh/dsci-310-project-group-13:1.0.0
